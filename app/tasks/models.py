@@ -15,12 +15,5 @@ class Task(models.Model):
     completed = models.IntegerField(default=0)
     schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE)
 
-    # partners = models.ManyToManyField(get_user_model())
-    # class Meta:
 
-    # posted_by = models.ForeignKey(
-    # get_user_model(), null=True, on_delete=models.CASCADE)
-
-
-# print("\n Tasks", Task.objects.all())
-# print("\n get_user_model()", get_user_model(), "\n")
+# print(Task.objects.all()[0].values())
