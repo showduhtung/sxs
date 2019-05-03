@@ -2,13 +2,26 @@ import React, { useState } from 'react';
 import { Mutation } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import {
+  Avatar,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContentText,
+  DialogTitle,
   FormControl,
   Input,
   InputLabel,
   Paper,
+  Slide,
   Typography,
+  // VerifiedUserTwoTone,
 } from '@material-ui/core';
+import Gavel from '@material-ui/icons/Gavel';
+import Error from '../Shared/Error';
+
+function Transition(props) {
+  return <Slide direction="down" {...props} />;
+}
 
 const Register = ({ setNewUser }) => {
   const [username, setUsername] = useState('');
@@ -22,84 +35,112 @@ const Register = ({ setNewUser }) => {
     // setOpen(true);    one way to set the dialog box open on handlesubmit
   };
   return (
-    <Paper>
-      Register as Existing User
-      <Typography variant="headline">Register</Typography>
-      <Mutation
-        mutation={REGISTER_MUTATION}
-        variables={{ username, email, password }}
-        onCompleted={data => {
-          console.log({ data });
-          setOpen(true);
-        }}
+    <div>
+      <Paper>
+        Register as Existing User
+        <Avatar>
+          <Gavel />
+        </Avatar>
+        <Typography variant="headline">Register</Typography>
+        <Mutation
+          mutation={REGISTER_MUTATION}
+          variables={{ username, email, password }}
+          onCompleted={data => {
+            console.log('register.js', { data });
+            setOpen(true);
+          }}
+        >
+          {(createUser, { loading, error }) => {
+            return (
+              <form
+                onSubmit={event => handleSubmit(event, createUser)}
+                // className={classes.form}
+              >
+                <FormControl margin="normal" required fullWidth>
+                  <InputLabel htmlFor="username">UserName</InputLabel>
+                  <Input
+                    id="username"
+                    onChange={event => setUsername(event.target.value)}
+                  />
+                </FormControl>
+
+                <FormControl margin="normal" required fullWidth>
+                  <InputLabel htmlFor="email">Email</InputLabel>
+                  <Input
+                    id="email"
+                    type="email"
+                    onChange={event => setEmail(event.target.value)}
+                  />
+                </FormControl>
+
+                <FormControl margin="normal" required fullWidth>
+                  <InputLabel htmlFor="password">Password</InputLabel>
+                  <Input
+                    id="password"
+                    type="password"
+                    onChange={event => setPassword(event.target.value)}
+                  />
+                </FormControl>
+
+                {/** Buttons */}
+
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="secondary"
+                  // className={classes.submit}
+                  disabled={
+                    loading ||
+                    !username.trim() ||
+                    !email.trim() ||
+                    !password.trim()
+                  }
+                >
+                  {loading ? 'Register...' : 'Registered'}
+                </Button>
+
+                <Button
+                  onClick={() => {
+                    setNewUser(false);
+                  }}
+                  fullWidth
+                  variant="outlined"
+                  color="primary"
+                >
+                  Previous User? Log in here
+                </Button>
+                {/* Error Handling */}
+                {error && <Error error={error} />}
+              </form>
+            );
+          }}
+        </Mutation>
+      </Paper>
+
+      {/* Success Dialog Area */}
+      <Dialog
+        open={open}
+        disableBackdropClick={true}
+        TransitionComponent={Transition}
       >
-        {(createUser, { loading, error }) => {
-          return (
-            <form
-              onSubmit={event => handleSubmit(event, createUser)}
-              // className={classes.form}
-            >
-              <FormControl margin="normal" required fullWidth>
-                <InputLabel htmlFor="username">UserName</InputLabel>
-                <Input
-                  id="username"
-                  onChange={event => setUsername(event.target.value)}
-                />
-              </FormControl>
+        <DialogTitle>
+          {/* <VerifiedUserTwoTone className={classes.icon} /> */}
+          New Account
+        </DialogTitle>
+        <DialogContentText>User successfully created!</DialogContentText>
 
-              <FormControl margin="normal" required fullWidth>
-                <InputLabel htmlFor="email">Email</InputLabel>
-                <Input
-                  id="email"
-                  type="email"
-                  onChange={event => setEmail(event.target.value)}
-                />
-              </FormControl>
-
-              <FormControl margin="normal" required fullWidth>
-                <InputLabel htmlFor="password">Password</InputLabel>
-                <Input
-                  id="password"
-                  type="password"
-                  onChange={event => setPassword(event.target.value)}
-                />
-              </FormControl>
-
-              {/** Buttons */}
-
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="secondary"
-                // className={classes.submit}
-                disabled={
-                  loading ||
-                  !username.trim() ||
-                  !email.trim() ||
-                  !password.trim()
-                }
-              >
-                {loading ? 'Register...' : 'Registered'}
-              </Button>
-
-              <Button
-                onClick={() => {
-                  setNewUser(false);
-                }}
-                fullWidth
-                variant="outlined"
-                color="primary"
-              >
-                Previous User? Log in here
-              </Button>
-              {/* Error Handling */}
-              {/* {error && <Error error={error} />} */}
-            </form>
-          );
-        }}
-      </Mutation>
-    </Paper>
+        <DialogActions>
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={() => setNewUser(false)}
+          >
+            Login
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
   );
 };
 
