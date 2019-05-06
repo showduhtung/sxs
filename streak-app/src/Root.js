@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 // import withRoot from './withRoot';
 import App from './Pages/App';
 import Profile from './Pages/Profile';
-// import Header from './components/Shared/Header';
+import Header from './Pages/Header';
 import Loading from './components/Shared/Loading';
 import Error from './components/Shared/Error';
 
@@ -14,15 +14,18 @@ export const UserContext = React.createContext();
 
 const Root = () => (
   <Query query={ME_QUERY}>
+    {/* {console.log('helejadfjldkj')} */}
+
     {({ data, loading, error }) => {
       if (loading) return <Loading />;
       if (error) return <Error error={error} />;
+      // console.log('root, current user', data);
       const currentUser = data.me;
 
       return (
         <Router>
           <UserContext.Provider value={currentUser}>
-            {/* <Header currentUser={currentUser} /> */}
+            <Header />
             <Switch>
               <Route exact path="/" component={App} />
               <Route path="/profile/:id" component={Profile} />
@@ -50,9 +53,8 @@ export const ME_QUERY = gql`
     me {
       id
       username
-      email
     }
   }
 `;
 
-export default App;
+export default Root;

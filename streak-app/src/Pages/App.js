@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Query } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import withStyles from '@material-ui/core/styles/withStyles';
+import DailyList from '../components/Schedule/DailyList';
 
 // import SearchTracks from '../components/Track/SearchTracks';
 // import TrackList from '../components/Track/TrackList';
@@ -19,13 +20,12 @@ const App = ({ classes }) => {
         {({ data, loading, error }) => {
           if (loading) return <Loading />;
           if (error) return <Error error={error} />;
-          return JSON.stringify(data);
+          return <DailyList schedules={data} />;
+          // return JSON.stringify(data);
           // const tracks = searchResults.length > 0 ? searchResults : data.tracks;
           // return <TrackList tracks={tracks} />;
         }}
       </Query>
-
-      {/* <TrackList /> */}
     </div>
   );
 };
@@ -34,6 +34,18 @@ export const GET_SCHEDULES_QUERY = gql`
   {
     schedule {
       id
+      partner1 {
+        username
+      }
+      partner2 {
+        username
+      }
+      taskSet {
+        id
+        title
+        completed
+        createdAt
+      }
     }
   }
 `;

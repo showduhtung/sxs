@@ -54,10 +54,10 @@ class UpdateTask(graphene.Mutation):
             # completed=F('completed') + 1)
         task = Task.objects.get(id=task_id)
         # task.update(completed=F('completed') + 1)
-        print(task.completed)
-        print(type(task.completed))
+        # print(task.completed)
+        # print(type(task.completed))
         # print(type(F('completed')))
-        task.completed = F('completed') + 1
+        task.completed = task.completed + 1
         task.save()
         return UpdateTask(task=task)
 
