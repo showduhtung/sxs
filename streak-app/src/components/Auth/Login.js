@@ -15,6 +15,7 @@ import Error from '../Shared/Error';
 const Login = ({ setNewUser }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
   const handleSubmit = async (event, tokenAuth, client) => {
     event.preventDefault();
     const res = await tokenAuth();
@@ -22,6 +23,7 @@ const Login = ({ setNewUser }) => {
     localStorage.setItem('authToken', res.data.tokenAuth.token);
     client.writeData({ data: { isLoggedIn: true } });
   };
+
   return (
     <div>
       <Paper>

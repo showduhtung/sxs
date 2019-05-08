@@ -4,26 +4,33 @@ import { gql } from 'apollo-boost';
 import Error from '../Shared/Error';
 import Button from '@material-ui/core/Button';
 
-const CompleteTask = task => {
-  const handleClick = (id, updateTask) => {
-    console.log('handleClick', id, 'break', updateTask);
-    let res = updateTask({ variables: { taskId: id } });
-    console.log(res);
+const CompleteTask = (task, tasks, updateTasks) => {
+  // console.log('task', task, 'tasks', tasks, 'updateTasks', updateTasks);
+
+  const handleClick = async (id, updateTask) => {
+    //update backend
+    await updateTask({ variables: { taskId: id } });
+
+    //update state
+    let task2 = task.tasks.map(a => {
+      return { ...a };
+    });
+    task2.find(a => a.title === task.task.title).completed++;
+    task.updateTasks([...task2]);
   };
   return (
     <>
       <Mutation
         mutation={COMPLETE_TASK_MUTATION}
         onCompleted={data => {
-          console.log('hello completeTask', data);
+          // console.log('hello completeTask', data);
         }}
       >
         {(updateTask, { loading, error }) => {
           if (error) return <Error error={error} />;
           return (
             <Button onClick={() => handleClick(task.task.id, updateTask)}>
-              {console.log(task)}
-              Completed
+              Finished
             </Button>
           );
         }}

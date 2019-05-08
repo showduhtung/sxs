@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 // import withStyles from '@material-ui/core/styles/withStyles';
+// import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -14,70 +15,102 @@ import ListItemText from '@material-ui/core/ListItemText';
 // import { Link } from 'react-router-dom';
 import { UserContext } from '../../Root';
 import CompleteTask from './CompleteTask';
+import AddFriend from './AddFriend';
 import * as moment from 'moment';
+
+// export const TaskContext = React.createContext();
 
 const DailyList = ({ classes, schedules }) => {
   const currentUser = useContext(UserContext);
   const [friends, updateFriends] = useState([]);
-  const [task, updateTask] = useState([]);
+  const [tasks, updateTasks] = useState([]);
 
-  const allFriends = [];
+  //my little hack to fix up the states
+  let allFriends = [];
+  let allTasks = [];
+
   for (let i = 0; i < schedules.schedule.length; i++) {
     if (currentUser.username === schedules.schedule[i].partner1.username) {
-      console.log('hello1');
       allFriends.push(schedules.schedule[i].partner2.username);
-      // friends.push(schedules.schedule[i].partner2.username);
+      allTasks = [...allTasks, ...schedules.schedule[i].taskSet];
     } else if (
       currentUser.username === schedules.schedule[i].partner2.username
     ) {
-      console.log('hello2');
       allFriends.push(schedules.schedule[i].partner1.username);
-      // friends.push(schedules.schedule[i].partner1.username);
+      allTasks = [...allTasks, ...schedules.schedule[i].taskSet];
     }
   }
+
   useEffect(() => {
     updateFriends([...allFriends]);
+    updateTasks([...allTasks]);
   }, []);
 
-  //I want to have on this page the tasks for today for the owner
-  //need to find id of the owner
-  return (
-    <List>
-      {schedules.schedule.map(today => {
-        console.log(today);
+  // console.log('tasks', tasks, 'friends', friends);
 
-        if (
-          today.partner1.username === currentUser.username ||
-          today.partner2.username === currentUser.username
-        ) {
-          return (
-            <div key={today.id}>
-              These are my friends: {friends}
-              <div>Today is {moment().format('MMM Do, YYYY')}</div>
-              <div>This is your tasks for today:</div>
-              <ListItem>
-                {today.taskSet.map(task => (
-                  <div key={task.id}>
-                    <ListItemText
-                      primaryTypographyProps={{
-                        variant: 'subheading',
-                        color: 'primary',
-                      }}
-                      primary={task.title.toUpperCase()}
-                    />
-                    <ListItemText primary={task.completed} />
-                    <CompleteTask task={task} />
-                    {/* Update Complete */}
-                  </div>
-                ))}
-              </ListItem>
-            </div>
-          );
-        }
-      })}
-    </List>
+  return (
+    <div>
+      These are my friends: {friends}
+      <div>Today is {moment().format('MMM Do, YYYY')}</div>
+      <div>This is your tasks for today:</div>
+      <List>
+        {tasks.map(task => (
+          <div key={task.id}>
+            <ListItem>
+              <ListItemText
+                primaryTypographyProps={{
+                  variant: 'subheading',
+                  color: 'primary',
+                }}
+                primary={task.title}
+              />
+              <ListItemText primary={task.completed} />
+              <CompleteTask
+                task={task}
+                tasks={tasks}
+                updateTasks={updateTasks}
+              />
+            </ListItem>
+          </div>
+        ))}
+      </List>
+      <AddFriend schedules={schedules} />
+      {/* <Button>Add Friend</Button> */}
+    </div>
   );
 };
+//       {schedules.schedule.map(today => {
+//         if (
+//           today.partner1.username === currentUser.username ||
+//           today.partner2.username === currentUser.username
+//         ) {
+//           return (
+//             <div key={today.id}>
+//               These are my friends: {friends}
+//               <div>Today is {moment().format('MMM Do, YYYY')}</div>
+//               <div>This is your tasks for today:</div>
+//               <ListItem>
+//                 {today.taskSet.map(task => (
+//                   <div key={task.id}>
+//                     <ListItemText
+//                       primaryTypographyProps={{
+//                         variant: 'subheading',
+//                         color: 'primary',
+//                       }}
+//                       primary={task.title.toUpperCase()}
+//                     />
+//                     <ListItemText primary={task.completed} />
+//                     <CompleteTask task={task} />
+//                   </div>
+//                 ))}
+//               </ListItem>
+//             </div>
+//           );
+//         }
+//       })}
+//     </List>
+//   );
+// };
 
 // const styles = {
 //   root: {
