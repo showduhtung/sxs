@@ -52,8 +52,6 @@ const Login = ({ setNewUser }) => {
                   />
                 </FormControl>
 
-                {/** Buttons */}
-
                 <Button
                   type="submit"
                   fullWidth

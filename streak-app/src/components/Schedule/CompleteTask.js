@@ -4,7 +4,7 @@ import { gql } from 'apollo-boost';
 import Error from '../Shared/Error';
 import Button from '@material-ui/core/Button';
 
-const CompleteTask = (task, tasks, updateTasks) => {
+const CompleteTask = (task, tasks, setTasks) => {
   // console.log('task', task, 'tasks', tasks, 'updateTasks', updateTasks);
 
   const handleClick = async (id, updateTask) => {
@@ -16,7 +16,7 @@ const CompleteTask = (task, tasks, updateTasks) => {
       return { ...a };
     });
     task2.find(a => a.title === task.task.title).completed++;
-    task.updateTasks([...task2]);
+    task.setTasks([...task2]);
   };
   return (
     <>
