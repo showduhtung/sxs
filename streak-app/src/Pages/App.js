@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Query } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import withStyles from '@material-ui/core/styles/withStyles';
@@ -15,13 +15,13 @@ const App = ({ classes }) => {
   return (
     <div className={classes.container}>
       {/* <SearchTracks setSearchResults={setSearchResults} /> */}
-      {/* <CreateTrack /> */}
+
       <Query query={GET_SCHEDULES_QUERY}>
         {({ data, loading, error }) => {
           if (loading) return <Loading />;
           if (error) return <Error error={error} />;
           return <DailyList schedules={data} />;
-          // return JSON.stringify(data);
+
           // const tracks = searchResults.length > 0 ? searchResults : data.tracks;
           // return <TrackList tracks={tracks} />;
         }}

@@ -1,22 +1,28 @@
-import React, { useState, useContext } from 'react';
+import React from 'react';
 import { Mutation } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import Error from '../Shared/Error';
 import Button from '@material-ui/core/Button';
 
 const CompleteTask = task => {
-  const hello = 1;
-  console.log(task);
-  const handleClick = async (id, updateTask) => {
-    await updateTask({ variables: { taskId: id } });
+  const handleClick = (id, updateTask) => {
+    console.log('handleClick', id, 'break', updateTask);
+    let res = updateTask({ variables: { taskId: id } });
+    console.log(res);
   };
   return (
     <>
-      <Mutation mutation={COMPLETE_TASK_MUTATION}>
+      <Mutation
+        mutation={COMPLETE_TASK_MUTATION}
+        onCompleted={data => {
+          console.log('hello completeTask', data);
+        }}
+      >
         {(updateTask, { loading, error }) => {
           if (error) return <Error error={error} />;
           return (
-            <Button onClick={() => handleClick(task.id, updateTask)}>
+            <Button onClick={() => handleClick(task.task.id, updateTask)}>
+              {console.log(task)}
               Completed
             </Button>
           );

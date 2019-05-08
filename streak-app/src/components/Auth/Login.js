@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Typography from '@material-ui/core/Typography';
-import Avatar from '@material-ui/core/Avatar';
+// import Avatar from '@material-ui/core/Avatar';
 import FormControl from '@material-ui/core/FormControl';
 import Paper from '@material-ui/core/Paper';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import Button from '@material-ui/core/Button';
-import Lock from '@material-ui/icons/Lock';
+// import Lock from '@material-ui/icons/Lock';
 import { Mutation } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import Error from '../Shared/Error';
