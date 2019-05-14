@@ -1,31 +1,24 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Mutation } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import Error from '../Shared/Error';
-import Button from '@material-ui/core/Button';
-import Menu from '@material-ui/core/Menu';
-import MenuList from '@material-ui/core/MenuList';
+// import Button from '@material-ui/core/Button';
+// import Menu from '@material-ui/core/Menu';
+// import MenuList from '@material-ui/core/MenuList';
 import FormControl from '@material-ui/core/FormControl';
-import Paper from '@material-ui/core/Paper';
+// import Paper from '@material-ui/core/Paper';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
-import { UserContext } from '../../Root';
+// import { UserContext } from '../../Root';
+import { GET_SCHEDULES_QUERY } from '../../Pages/App';
 
-const AddFriend = ({ schedules, allFriends, scheduleId }) => {
+const AddTask = ({ schedules, allFriends, scheduleId, setTasks, tasks }) => {
   const [task, setTask] = useState('');
-  console.log(
-    'schedules',
-    schedules,
-    'allFriends',
-    allFriends,
-    'scheduleId',
-    scheduleId
-  );
+
   const handleSubmit = async (event, createTask, scheduleId) => {
     event.preventDefault();
     if (scheduleId === -1) alert('choose a friend first');
     else {
-      console.log('activated adding task');
       await createTask({
         variables: {
           title: task,
@@ -33,6 +26,7 @@ const AddFriend = ({ schedules, allFriends, scheduleId }) => {
           description: '',
         },
       });
+      setTask('');
     }
   };
   return (
@@ -40,8 +34,10 @@ const AddFriend = ({ schedules, allFriends, scheduleId }) => {
       <Mutation
         mutation={CREATE_TASK_MUTATION}
         onCompleted={data => {
-          console.log('task added', data);
+          console.log(data);
+          setTasks([...tasks].concat(data.createTask.task));
         }}
+        refetchQueries={() => [{ query: GET_SCHEDULES_QUERY }]}
       >
         {(createTask, { loading, error }) => {
           if (error) return <Error error={error} />;
@@ -53,6 +49,7 @@ const AddFriend = ({ schedules, allFriends, scheduleId }) => {
                 <InputLabel htmlFor="task">Add Task</InputLabel>
                 <Input
                   id="task"
+                  value={task}
                   onChange={event => setTask(event.target.value)}
                 />
               </FormControl>
@@ -75,8 +72,9 @@ const CREATE_TASK_MUTATION = gql`
         id
         title
         createdAt
+        completed
       }
     }
   }
 `;
-export default AddFriend;
+export default AddTask;

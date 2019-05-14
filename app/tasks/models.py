@@ -8,7 +8,7 @@ from schedules.models import Schedule
 
 class Task(models.Model):
     # an id field is added automatically as trackId
-    title = models.CharField(max_length=50, unique=True)
+    title = models.CharField(max_length=50)
     description = models.TextField(blank=True)
     # url = models.URLField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)

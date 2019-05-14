@@ -11,19 +11,22 @@ import Loading from '../components/Shared/Loading';
 import Error from '../components/Shared/Error';
 
 const App = ({ classes }) => {
-  // const [searchResults, setSearchResults] = useState([]);
   return (
     <div className={classes.container}>
-      {/* <SearchTracks setSearchResults={setSearchResults} /> */}
-
-      <Query query={GET_SCHEDULES_QUERY}>
-        {({ data, loading, error }) => {
-          if (loading) return <Loading />;
-          if (error) return <Error error={error} />;
-          return <DailyList schedules={data} />;
-
-          // const tracks = searchResults.length > 0 ? searchResults : data.tracks;
-          // return <TrackList tracks={tracks} />;
+      <Query query={GET_SCHEDULES_QUERY} fetchPolicy="cache-and-network">
+        {({ data: schedules, loading: loadingOne, error }) => {
+          // if (loading) return <Loading />;
+          // if (error) return <Error error={error} />;
+          // return <DailyList schedules={data} />;
+          return (
+            <Query query={GET_USERS_QUERY} fetchPolicy="cache-and-network">
+              {({ data: allUsers, loading: loadingTwo, error }) => {
+                if (loadingOne || loadingTwo) return <Loading />;
+                if (error) return <Error error={error} />;
+                return <DailyList schedules={schedules} allUsers={allUsers} />;
+              }}
+            </Query>
+          );
         }}
       </Query>
     </div>
@@ -46,6 +49,15 @@ export const GET_SCHEDULES_QUERY = gql`
         completed
         createdAt
       }
+    }
+  }
+`;
+
+const GET_USERS_QUERY = gql`
+  {
+    allUsers {
+      id
+      username
     }
   }
 `;

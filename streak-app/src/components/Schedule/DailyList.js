@@ -4,39 +4,36 @@ import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-// import Typography from '@material-ui/core/Typography';
-// import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-// import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-// import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-// import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
-// import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-// import Menu from '@material-ui/core/Menu';
-// import MenuList from '@material-ui/core/MenuList';
-// import { Link } from 'react-router-dom';
+
 import { UserContext } from '../../Root';
 import CompleteTask from './CompleteTask';
 import AddFriend from './AddFriend';
 import AddTask from './AddTask';
 import * as moment from 'moment';
 
-// export const TaskContext = React.createContext();
-
-const DailyList = ({ classes, schedules }) => {
+const DailyList = ({ classes, schedules, allUsers }) => {
   const currentUser = useContext(UserContext);
   const [friends, setFriends] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [scheduleId, setScheduleId] = useState(-1);
   const [thisFriend, setThisFriend] = useState('');
+  const [username, setUsername] = useState('');
 
-  //my little hack to fix up the states
+  const allPeople = [];
+
+  //make all users list
+  for (let k = 0; k < allUsers.allUsers.length; k++) {
+    allPeople.push(allUsers.allUsers[k].username);
+  }
+
   let allFriends = [];
-  let allTasks = [];
-  let scheduleArrayId = -1;
-  // console.log(schedules.schedule);
 
+  //which friend?
   const handleFriendClick = chosenFriend => {
     if (chosenFriend === 'I have no friends') {
       setThisFriend('');
+      setTasks([]);
+      setScheduleId(-1);
     } else {
       setThisFriend(chosenFriend);
       for (let j = 0; j < schedules.schedule.length; j++) {
@@ -48,12 +45,12 @@ const DailyList = ({ classes, schedules }) => {
         ) {
           setScheduleId(schedules.schedule[j].id);
           setTasks(schedules.schedule[j].taskSet);
-          allTasks = [...allTasks, ...schedules.schedule[j].taskSet];
         }
       }
     }
   };
 
+  //make an array of all friends
   for (let i = 0; i < schedules.schedule.length; i++) {
     if (currentUser.username === schedules.schedule[i].partner1.username) {
       allFriends.push(schedules.schedule[i].partner2.username);
@@ -63,10 +60,10 @@ const DailyList = ({ classes, schedules }) => {
       allFriends.push(schedules.schedule[i].partner1.username);
     }
   }
+  console.log(tasks, 'render');
 
   useEffect(() => {
     setFriends([...allFriends]);
-    setTasks([...allTasks]);
   }, []);
 
   return (
@@ -85,30 +82,43 @@ const DailyList = ({ classes, schedules }) => {
       }
       <div>Today is {moment().format('MMM Do, YYYY')}</div>
       <div>This is your tasks for today with {thisFriend}:</div>
-      <List>
-        {tasks.map(task => (
-          <div key={task.id}>
-            <ListItem>
-              <ListItemText
-                primaryTypographyProps={{
-                  variant: 'subheading',
-                  color: 'primary',
-                }}
-                primary={task.title}
-              />
-              <ListItemText primary={task.completed} />
-              <CompleteTask task={task} tasks={tasks} setTasks={setTasks} />
-            </ListItem>
-          </div>
-        ))}
-      </List>
-      <AddFriend schedules={schedules} allFriends={allFriends} />
+      {
+        <List>
+          {tasks.map(task => (
+            <div key={task.id}>
+              <ListItem>
+                <ListItemText
+                  primaryTypographyProps={{
+                    variant: 'subheading',
+                    color: 'primary',
+                  }}
+                  primary={task.title}
+                />
+                <ListItemText primary={task.completed} />
+                <CompleteTask task={task} tasks={tasks} setTasks={setTasks} />
+              </ListItem>
+            </div>
+          ))}
+        </List>
+      }
+      <AddFriend
+        schedules={schedules}
+        allFriends={allFriends}
+        username={username}
+        setUsername={setUsername}
+        setTasks={setTasks}
+        handleFriendClick={handleFriendClick}
+        allPeople={allPeople}
+        friends={friends}
+        setFriends={setFriends}
+      />
       <AddTask
         schedules={schedules}
         allFriends={allFriends}
         scheduleId={scheduleId}
+        setTasks={setTasks}
+        tasks={tasks}
       />
-      {/* <Button>Add Friend</Button> */}
     </div>
   );
 };

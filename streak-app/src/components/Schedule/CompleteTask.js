@@ -5,13 +5,8 @@ import Error from '../Shared/Error';
 import Button from '@material-ui/core/Button';
 
 const CompleteTask = (task, tasks, setTasks) => {
-  // console.log('task', task, 'tasks', tasks, 'updateTasks', updateTasks);
-
   const handleClick = async (id, updateTask) => {
-    //update backend
     await updateTask({ variables: { taskId: id } });
-
-    //update state
     let task2 = task.tasks.map(a => {
       return { ...a };
     });
@@ -20,12 +15,7 @@ const CompleteTask = (task, tasks, setTasks) => {
   };
   return (
     <>
-      <Mutation
-        mutation={COMPLETE_TASK_MUTATION}
-        onCompleted={data => {
-          // console.log('hello completeTask', data);
-        }}
-      >
+      <Mutation mutation={COMPLETE_TASK_MUTATION}>
         {(updateTask, { loading, error }) => {
           if (error) return <Error error={error} />;
           return (

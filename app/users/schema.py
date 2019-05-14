@@ -1,5 +1,6 @@
 # users schema and model(given)
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 
 import graphene
 from graphene_django import DjangoObjectType
@@ -12,7 +13,12 @@ class UserType(DjangoObjectType):
 
 class Query(graphene.ObjectType):
     user = graphene.Field(UserType, id=graphene.Int(required=True))
+    allUsers = graphene.List(UserType)
     me = graphene.Field(UserType)
+
+    def resolve_allUsers(self, info):
+        allUsers = User.objects.all()
+        return allUsers
 
     def resolve_user(self, info, id):
         return get_user_model().objects.get(id=id)
