@@ -3,6 +3,7 @@ import { Query } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import withStyles from '@material-ui/core/styles/withStyles';
 import DailyList from '../components/Schedule/DailyList';
+import * as moment from 'moment';
 
 // import SearchTracks from '../components/Track/SearchTracks';
 // import TrackList from '../components/Track/TrackList';
@@ -18,11 +19,13 @@ const App = ({ classes }) => {
           // if (loading) return <Loading />;
           // if (error) return <Error error={error} />;
           // return <DailyList schedules={data} />;
+          console.log(schedules);
           return (
             <Query query={GET_USERS_QUERY} fetchPolicy="cache-and-network">
               {({ data: allUsers, loading: loadingTwo, error }) => {
                 if (loadingOne || loadingTwo) return <Loading />;
                 if (error) return <Error error={error} />;
+
                 return <DailyList schedules={schedules} allUsers={allUsers} />;
               }}
             </Query>

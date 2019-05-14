@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-
+import FriendClick from './FriendClick';
 import { UserContext } from '../../Root';
 import CompleteTask from './CompleteTask';
 import AddFriend from './AddFriend';
@@ -60,7 +60,6 @@ const DailyList = ({ classes, schedules, allUsers }) => {
       allFriends.push(schedules.schedule[i].partner1.username);
     }
   }
-  console.log(tasks, 'render');
 
   useEffect(() => {
     setFriends([...allFriends]);
@@ -70,15 +69,31 @@ const DailyList = ({ classes, schedules, allUsers }) => {
     <div>
       These are my friends:
       {friends.map(friend => (
-        <Button key={friend} onClick={() => handleFriendClick(friend)}>
-          {friend}
-        </Button>
+        <FriendClick
+          schedules={schedules}
+          allUsers={allUsers}
+          setThisFriend={setThisFriend}
+          setTasks={setTasks}
+          setScheduleId={setScheduleId}
+          chosenFriend={friend}
+        />
+        // <Button key={friend} onClick={() => handleFriendClick(friend)}>
+        //   {friend}
+        // </Button>
       ))}
       Reset:
       {
-        <Button onClick={() => handleFriendClick('I have no friends')}>
-          Reset
-        </Button>
+        <FriendClick
+          schedules={schedules}
+          allUsers={allUsers}
+          setThisFriend={setThisFriend}
+          setTasks={setTasks}
+          setScheduleId={setScheduleId}
+          chosenFriend={'I have no friends'}
+        />
+        // <Button onClick={() => handleFriendClick('I have no friends')}>
+        //   Reset
+        // </Button>
       }
       <div>Today is {moment().format('MMM Do, YYYY')}</div>
       <div>This is your tasks for today with {thisFriend}:</div>
