@@ -4,6 +4,7 @@ import { gql } from 'apollo-boost';
 import withStyles from '@material-ui/core/styles/withStyles';
 import DailyList from '../components/Schedule/DailyList';
 import * as moment from 'moment';
+import calendarLogic from '../components/Schedule/CalendarLogic';
 
 // import SearchTracks from '../components/Track/SearchTracks';
 // import TrackList from '../components/Track/TrackList';
@@ -16,19 +17,36 @@ const App = ({ classes }) => {
     <div className={classes.container}>
       <Query query={GET_SCHEDULES_QUERY} fetchPolicy="cache-and-network">
         {({ data: schedules, loading: loadingOne, error }) => {
-          // if (loading) return <Loading />;
-          // if (error) return <Error error={error} />;
-          // return <DailyList schedules={data} />;
+          if (schedules.schedule) {
+            for (let i = 0; i < schedules.schedule.length; i++) {
+              for (let j = 0; j < schedules.schedule[i].taskSet.length; j++) {
+                let createdAtArr = schedules.schedule[i].taskSet[
+                  j
+                ].createdAt.split('-');
+                let createdAt = [
+                  parseInt(createdAtArr[1]),
+                  parseInt(createdAtArr[2]),
+                  parseInt(createdAtArr[0]),
+                ];
+                console.log(calendarLogic(createdAt));
+              }
+            }
+          }
+
           console.log(schedules);
           return (
-            <Query query={GET_USERS_QUERY} fetchPolicy="cache-and-network">
-              {({ data: allUsers, loading: loadingTwo, error }) => {
-                if (loadingOne || loadingTwo) return <Loading />;
-                if (error) return <Error error={error} />;
+            <>
+              <Query query={GET_USERS_QUERY} fetchPolicy="cache-and-network">
+                {({ data: allUsers, loading: loadingTwo, error }) => {
+                  if (loadingOne || loadingTwo) return <Loading />;
+                  if (error) return <Error error={error} />;
 
-                return <DailyList schedules={schedules} allUsers={allUsers} />;
-              }}
-            </Query>
+                  return (
+                    <DailyList schedules={schedules} allUsers={allUsers} />
+                  );
+                }}
+              </Query>
+            </>
           );
         }}
       </Query>

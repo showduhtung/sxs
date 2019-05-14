@@ -24,6 +24,7 @@ const AddTask = ({ schedules, allFriends, scheduleId, setTasks, tasks }) => {
           title: task,
           scheduleId: scheduleId,
           description: '',
+          daysSince: 0,
         },
       });
       setTask('');
@@ -73,6 +74,7 @@ const CREATE_TASK_MUTATION = gql`
         title
         createdAt
         completed
+        daysSince
       }
     }
   }

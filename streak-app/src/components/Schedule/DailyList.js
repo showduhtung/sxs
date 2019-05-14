@@ -70,12 +70,14 @@ const DailyList = ({ classes, schedules, allUsers }) => {
       These are my friends:
       {friends.map(friend => (
         <FriendClick
+          key={friend}
           schedules={schedules}
           allUsers={allUsers}
           setThisFriend={setThisFriend}
           setTasks={setTasks}
           setScheduleId={setScheduleId}
           chosenFriend={friend}
+          tasks={tasks}
         />
         // <Button key={friend} onClick={() => handleFriendClick(friend)}>
         //   {friend}

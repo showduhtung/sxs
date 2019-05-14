@@ -13,6 +13,7 @@ const FriendClick = ({
   setTasks,
   setScheduleId,
   chosenFriend,
+  tasks,
 }) => {
   const currentUser = useContext(UserContext);
   const handleClick = chosenFriend => {
@@ -34,12 +35,13 @@ const FriendClick = ({
         }
       }
     }
+    console.log(tasks, 'tasks');
   };
-
+  // console.log(schedules, 'aksdjsdjk', tasks);
   const calibrateTasks = () => {};
   console.log(chosenFriend);
   return (
-    // <Mutation mutation={CALIBRATE_TASK_MUTATION}>
+    // <Mutation mutation={CALIBRATE_TASK_MUTATION} variables={{ trackId: track.id }}>
     <Button onClick={() => handleClick(chosenFriend)}>
       {chosenFriend === 'I have no friends' ? 'Reset' : chosenFriend}
     </Button>
@@ -48,8 +50,8 @@ const FriendClick = ({
 };
 
 const CALIBRATE_TASK_MUTATION = gql`
-  mutation($partner1: String!, $partner2: String!) {
-    createSchedule(partner1: $partner1, partner2: $partner2) {
+  mutation($daysSince: Int!, $taskId: Int!) {
+    updateTask(daysSince: $daysSince, taskId: $taskId) {
       schedule {
         id
         partner1 {
@@ -70,3 +72,6 @@ const CALIBRATE_TASK_MUTATION = gql`
 `;
 
 export default FriendClick;
+
+//1) if schedules/tasks don't exist between two, create schedule/tasks
+//2) make multiple tasks based on createdAt

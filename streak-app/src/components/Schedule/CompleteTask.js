@@ -31,7 +31,7 @@ const CompleteTask = (task, tasks, setTasks) => {
 
 const COMPLETE_TASK_MUTATION = gql`
   mutation($taskId: Int!) {
-    updateTask(taskId: $taskId) {
+    incrementTask(taskId: $taskId) {
       task {
         title
         completed

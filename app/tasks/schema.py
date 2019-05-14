@@ -32,18 +32,19 @@ class CreateTask(graphene.Mutation):
         title = graphene.String()
         schedule_id = graphene.Int()
         description = graphene.String()
+        daysSince = graphene.Int()
 
-    def mutate(self, info, title, schedule_id, description):
+    def mutate(self, info, title, schedule_id, description, daysSince):
         schedule = Schedule.objects.get(id=schedule_id)
         task = Task.objects.create(
-            title=title, schedule=schedule, description=description
+            title=title, schedule=schedule, description=description, daysSince=daysSince
         )
         # task = Task(title=title, schedule=schedule, description=description)
         # task.save()
         return CreateTask(task=task, schedule=schedule)  # arguments = track
 
 
-class UpdateTask(graphene.Mutation):
+class IncrementTask(graphene.Mutation):
     task = graphene.Field(TaskType)
 
     class Arguments:
@@ -58,6 +59,20 @@ class UpdateTask(graphene.Mutation):
         # print(type(task.completed))
         # print(type(F('completed')))
         task.completed = task.completed + 1
+        task.save()
+        return IncrementTask(task=task)
+
+
+class UpdateTask(graphene.Mutation):
+    task = graphene.Field(TaskType)
+
+    class Arguments:
+        task_id = graphene.Int(required=True)
+        daysSince = graphene.Int(required=True)
+
+    def mutate(self, info, task_id, daysSince):
+        task = Task.objects.get(id=task_id)
+        task.daysSince = daysSince
         task.save()
         return UpdateTask(task=task)
 
@@ -80,4 +95,5 @@ class DeleteTask(graphene.Mutation):
 class Mutation(graphene.ObjectType):
     create_task = CreateTask.Field()
     update_task = UpdateTask.Field()
+    increment_task = IncrementTask.Field()
     delete_task = DeleteTask.Field()
