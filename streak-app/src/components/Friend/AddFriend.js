@@ -1,12 +1,10 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { Mutation } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import Error from '../Shared/Error';
-// import Button from '@material-ui/core/Button';
-// import Menu from '@material-ui/core/Menu';
-// import MenuList from '@material-ui/core/MenuList';
+
 import FormControl from '@material-ui/core/FormControl';
-// import Paper from '@material-ui/core/Paper';
+
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import { UserContext } from '../../Root';
@@ -23,9 +21,6 @@ const AddFriend = ({
   setFriends,
 }) => {
   const currentUser = useContext(UserContext);
-  // console.log(allPeople, 'from addFriend');
-  // console.log(allFriends);
-
   const handleSubmit = async (event, createSchedule) => {
     event.preventDefault();
     handleFriendClick();
@@ -94,7 +89,6 @@ const ADD_FRIEND_MUTATION = gql`
         taskSet {
           id
           title
-          completed
           createdAt
         }
       }

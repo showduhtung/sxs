@@ -14,12 +14,9 @@ export const UserContext = React.createContext();
 
 const Root = () => (
   <Query query={ME_QUERY} fetchPolicy="cache-and-network">
-    {/* {console.log('helejadfjldkj')} */}
-
     {({ data, loading, error }) => {
       if (loading) return <Loading />;
       if (error) return <Error error={error} />;
-      // console.log('root, current user', data);
       const currentUser = data.me;
 
       return (

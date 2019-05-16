@@ -1,15 +1,14 @@
 import React, { useState, useContext, useEffect } from 'react';
-// import withStyles from '@material-ui/core/styles/withStyles';
-import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import FriendClick from './FriendClick';
+import FriendClick from '../Friend/FriendClick';
 import { UserContext } from '../../Root';
-import CompleteTask from './CompleteTask';
-import AddFriend from './AddFriend';
-import AddTask from './AddTask';
+import AddFriend from '../Friend/AddFriend';
+import AddTask from '../Task/AddTask';
+import ListTask from '../Task/ListTask';
 import * as moment from 'moment';
+import { convertToday } from '../Shared/CalendarLogic';
+const today = convertToday();
+console.log(today);
 
 const DailyList = ({ classes, schedules, allUsers }) => {
   const currentUser = useContext(UserContext);
@@ -79,9 +78,6 @@ const DailyList = ({ classes, schedules, allUsers }) => {
           chosenFriend={friend}
           tasks={tasks}
         />
-        // <Button key={friend} onClick={() => handleFriendClick(friend)}>
-        //   {friend}
-        // </Button>
       ))}
       Reset:
       {
@@ -93,28 +89,13 @@ const DailyList = ({ classes, schedules, allUsers }) => {
           setScheduleId={setScheduleId}
           chosenFriend={'I have no friends'}
         />
-        // <Button onClick={() => handleFriendClick('I have no friends')}>
-        //   Reset
-        // </Button>
       }
       <div>Today is {moment().format('MMM Do, YYYY')}</div>
-      <div>This is your tasks for today with {thisFriend}:</div>
+      <div>This is your tasks for today with {thisFriend.toUpperCase()}:</div>
       {
         <List>
           {tasks.map(task => (
-            <div key={task.id}>
-              <ListItem>
-                <ListItemText
-                  primaryTypographyProps={{
-                    variant: 'subheading',
-                    color: 'primary',
-                  }}
-                  primary={task.title}
-                />
-                <ListItemText primary={task.completed} />
-                <CompleteTask task={task} tasks={tasks} setTasks={setTasks} />
-              </ListItem>
-            </div>
+            <ListTask task={task} tasks={tasks} setTasks={setTasks} />
           ))}
         </List>
       }

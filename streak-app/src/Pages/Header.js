@@ -28,7 +28,7 @@ const Header = ({ classes }) => {
           <Link to={`/profile/${currentUser.id}`} className={classes.grow}>
             <FaceIcon className={classes.faceIcon} />
             <Typography variant="headline" className={classes.username} noWrap>
-              {currentUser.username}
+              {currentUser.username.toUpperCase()}
             </Typography>
           </Link>
         )}

@@ -19,7 +19,6 @@ const Login = ({ setNewUser }) => {
   const handleSubmit = async (event, tokenAuth, client) => {
     event.preventDefault();
     const res = await tokenAuth();
-    console.log(res.data);
     localStorage.setItem('authToken', res.data.tokenAuth.token);
     client.writeData({ data: { isLoggedIn: true } });
   };

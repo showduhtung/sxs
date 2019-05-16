@@ -3,13 +3,10 @@ import graphene
 from graphene_django import DjangoObjectType
 from graphql import GraphQLError
 from django.db.models import Q, F
-from .models import Task
+from .models import Task, Date
 from users.schema import UserType
 from schedules.schema import ScheduleType
 from schedules.models import Schedule
-
-
-print("and this is what task looks like", Task)
 
 
 class TaskType(DjangoObjectType):
@@ -17,64 +14,109 @@ class TaskType(DjangoObjectType):
         model = Task  # from imported .models
 
 
+class DateType(DjangoObjectType):
+    class Meta:
+        model = Date
+
+
 class Query(graphene.ObjectType):
     tasks = graphene.List(TaskType)
+    dates = graphene.List(DateType)
 
     def resolve_tasks(self, info):
         return Task.objects.all()
+
+    def resolve_dates(self, info):
+        return Date.objects.all()
 
 
 class CreateTask(graphene.Mutation):
     task = graphene.Field(TaskType)  # ???
     schedule = graphene.Field(ScheduleType)
+    date = graphene.Field(DateType)
 
     class Arguments:
         title = graphene.String()
         schedule_id = graphene.Int()
         description = graphene.String()
-        daysSince = graphene.Int()
+        day = graphene.String()
 
-    def mutate(self, info, title, schedule_id, description, daysSince):
+    def mutate(self, info, title, schedule_id, description, day):
         schedule = Schedule.objects.get(id=schedule_id)
         task = Task.objects.create(
-            title=title, schedule=schedule, description=description, daysSince=daysSince
+            title=title, schedule=schedule, description=description
         )
-        # task = Task(title=title, schedule=schedule, description=description)
-        # task.save()
-        return CreateTask(task=task, schedule=schedule)  # arguments = track
+        date = Date.objects.create(task=task, day=day)
+        return CreateTask(task=task, schedule=schedule, date=date)
 
 
 class IncrementTask(graphene.Mutation):
     task = graphene.Field(TaskType)
+    date = graphene.Field(DateType)
 
     class Arguments:
         task_id = graphene.Int(required=True)
+        day = graphene.String(required=True)
 
-    def mutate(self, info, task_id):
-        # task = Task.objects.get(id=task_id).update(
-            # completed=F('completed') + 1)
+    def mutate(self, info, task_id, day):
         task = Task.objects.get(id=task_id)
-        # task.update(completed=F('completed') + 1)
-        # print(task.completed)
-        # print(type(task.completed))
-        # print(type(F('completed')))
-        task.completed = task.completed + 1
-        task.save()
-        return IncrementTask(task=task)
+
+        date = task.date.get(day=day)
+        date.completed = date.completed + 1
+        date.save()
+        # if task.date != []:
+        #     task.date.completed = task.date.completed + 1
+        return IncrementTask(task=task, date=date)
 
 
-class UpdateTask(graphene.Mutation):
+class CreateDate(graphene.Mutation):
+    date = graphene.Field(DateType)
     task = graphene.Field(TaskType)
 
     class Arguments:
         task_id = graphene.Int(required=True)
-        daysSince = graphene.Int(required=True)
+        day = graphene.String()
+        days = graphene.String()
 
-    def mutate(self, info, task_id, daysSince):
+    def mutate(self, info, task_id, day, days):
         task = Task.objects.get(id=task_id)
-        task.daysSince = daysSince
-        task.save()
-        return UpdateTask(task=task)
+        myList = days.split(',')
+        date = Date.objects.bulk_create(
+            [Date(task=task, day=n) for n in myList])
+        # date = Date.objects.bulk_create(task=task, day=day)
+        return CreateDate(task=task, date=date)
+        # task = Task.objects.get(id=task_id)
+
+
+# class DeleteDate(graphene.Mutation):
+#     task_id = graphene.Int()
+#     # date = graphene.Str()
+
+#     class Arguments:
+#         task_id = graphene.Int(required=True)
+#         date = graphene.Str(required=True)
+
+#     def mutate(self, info, task_id, date):
+#         # user = info.context.user
+#         task = Task.objects.get(id=task_id)
+#         date = Date.objects.get(day=date, task=task)
+#         date.delete()
+#         return DeleteTask(task_id=task_id)
+
+
+# class UpdateTask(graphene.Mutation):
+#     task = graphene.Field(TaskType)
+
+#     class Arguments:
+#         task_id = graphene.Int(required=True)
+#         # title = graphene.String(required = True)
+
+#     def mutate(self, info, task_id):
+#         task = Task.objects.get(id=task_id)
+
+#         # task.daysSince = daysSince
+#         task.save()
+#         return UpdateTask(task=task)
 
 
 class DeleteTask(graphene.Mutation):
@@ -94,6 +136,8 @@ class DeleteTask(graphene.Mutation):
 
 class Mutation(graphene.ObjectType):
     create_task = CreateTask.Field()
-    update_task = UpdateTask.Field()
+    # update_task = UpdateTask.Field()
     increment_task = IncrementTask.Field()
     delete_task = DeleteTask.Field()
+    create_date = CreateDate.Field()
+    # delete_date = DeleteDate.Field()

@@ -2,15 +2,13 @@ import React, { useState } from 'react';
 import { Mutation } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import Error from '../Shared/Error';
-// import Button from '@material-ui/core/Button';
-// import Menu from '@material-ui/core/Menu';
-// import MenuList from '@material-ui/core/MenuList';
 import FormControl from '@material-ui/core/FormControl';
-// import Paper from '@material-ui/core/Paper';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
-// import { UserContext } from '../../Root';
 import { GET_SCHEDULES_QUERY } from '../../Pages/App';
+
+import { convertToday } from '../Shared/CalendarLogic';
+const today = convertToday();
 
 const AddTask = ({ schedules, allFriends, scheduleId, setTasks, tasks }) => {
   const [task, setTask] = useState('');
@@ -24,7 +22,7 @@ const AddTask = ({ schedules, allFriends, scheduleId, setTasks, tasks }) => {
           title: task,
           scheduleId: scheduleId,
           description: '',
-          daysSince: 0,
+          day: today,
         },
       });
       setTask('');
@@ -63,18 +61,27 @@ const AddTask = ({ schedules, allFriends, scheduleId, setTasks, tasks }) => {
 };
 
 const CREATE_TASK_MUTATION = gql`
-  mutation($title: String!, $scheduleId: Int!, $description: String) {
+  mutation(
+    $title: String!
+    $scheduleId: Int!
+    $description: String
+    $day: String!
+  ) {
     createTask(
       title: $title
       scheduleId: $scheduleId
       description: $description
+      day: $day
     ) {
       task {
         id
         title
         createdAt
-        completed
-        daysSince
+        date {
+          id
+          day
+          completed
+        }
       }
     }
   }

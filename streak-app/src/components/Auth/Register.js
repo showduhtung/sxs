@@ -31,8 +31,6 @@ const Register = ({ setNewUser }) => {
   const handleSubmit = (event, createUser) => {
     event.preventDefault();
     createUser();
-    // console.log({ res });
-    // setOpen(true);    one way to set the dialog box open on handlesubmit
   };
   return (
     <div>
@@ -46,7 +44,6 @@ const Register = ({ setNewUser }) => {
           mutation={REGISTER_MUTATION}
           variables={{ username, email, password }}
           onCompleted={data => {
-            console.log('register.js', { data });
             setOpen(true);
           }}
         >
